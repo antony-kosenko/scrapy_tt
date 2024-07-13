@@ -42,9 +42,13 @@ def description_organize(topics: Collection) -> str:
     stripped_topics = []
     for topic in topics:
         # stripping and removing whitespaces and new line characters.
-        updated_string = topic.replace("\n", "").strip()
-        stripped_topics.append(updated_string)
-    return " ".join(stripped_topics)
+        try:
+            updated_string = topic.replace("\n", "").strip()
+        except (AttributeError, AttributeError):
+            pass
+        else:
+            stripped_topics.append(updated_string)
+            return " ".join(stripped_topics)
 
 
 class HerboProcessors:
