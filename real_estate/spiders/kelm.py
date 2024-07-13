@@ -13,21 +13,21 @@ class KelmSpider(scrapy.Spider):
     start_urls = ["https://kelm-immobilien.de/immobilien"]
 
     def parse(self, response):
-        total_items_container = response.css(
+        total_pages_container = response.css(
             "button.immomakler-submit.btn.btn-primary::text"
         ).getall()[1]
         try:
-            total_items = int(re.findall(r"\d+", total_items_container)[0])
+            total_items = int(re.findall(r"\d+", total_pages_container)[0])
         except TypeError:
-            total_items = None
+            last_page = 1
         else:
             # defining actual paging number for loading paginated content
             last_page = int(math.ceil(total_items / 9))
 
-            yield scrapy.Request(
-                url=self.start_urls[0] + f"/page/{last_page}/",
-                callback=self.parse_all_links
-            )
+        yield scrapy.Request(
+            url=self.start_urls[0] + f"/page/{last_page}/",
+            callback=self.parse_all_links
+        )
 
     def parse_all_links(self, response):
         real_estate_links = response.css("h3.property-title>a::attr(href)").getall()

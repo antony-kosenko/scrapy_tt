@@ -14,8 +14,14 @@ locale.setlocale(locale.LC_NUMERIC, "de_DE")
 class KelmItem(scrapy.Item):
     """ Representation of real estate objects parsed from Kelm domain. """
     url = scrapy.Field(output_processor=TakeFirst())
-    title = scrapy.Field(input_processor=MapCompose(remove_tags), output_processor=TakeFirst())
-    status = scrapy.Field(input_processor=MapCompose(remove_tags), output_processor=TakeFirst())
+    title = scrapy.Field(
+        input_processor=MapCompose(remove_tags),
+        output_processor=TakeFirst()
+    )
+    status = scrapy.Field(
+        input_processor=MapCompose(remove_tags),
+        output_processor=TakeFirst()
+    )
     photos = scrapy.Field()
     type = scrapy.Field(
         input_processor=Compose(
