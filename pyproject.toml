@@ -8,6 +8,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 scrapy = "^2.11.2"
+scrapy-selenium = "^0.0.7"
+webdriver-manager = "^4.0.1"
+selenium = "3.9.0"
 
 
 [build-system]
