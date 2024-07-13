@@ -8,11 +8,14 @@ from real_estate.items import KelmItem
 
 
 class KelmSpider(scrapy.Spider):
+    """ Crawls Keln real estate objects. """
     name = "kelm"
     allowed_domains = ["kelm-immobilien.de"]
     start_urls = ["https://kelm-immobilien.de/immobilien"]
 
     def parse(self, response):
+        """ Core parser to obtain pagination objects and
+        handover total pages num to the next parser. """
         total_pages_container = response.css(
             "button.immomakler-submit.btn.btn-primary::text"
         ).getall()[1]
@@ -30,22 +33,27 @@ class KelmSpider(scrapy.Spider):
         )
 
     def parse_all_links(self, response):
+        """ Parses all real estate properties' links and handovers to
+         the detail parser which parses each object link. """
         real_estate_links = response.css("h3.property-title>a::attr(href)").getall()
         yield from response.follow_all(real_estate_links, callback=self.parse_details)
 
     @staticmethod
     def parse_details(response):
-        """ Parses detailed property paige. """
-        item = ItemLoader(item=KelmItem(), selector=response)
+        """ Parses detailed property page. """
 
+        # init an Item loader for Kelm objects.
+        item = ItemLoader(item=KelmItem(), selector=response)
+        # adding a values to an item fields retrieved by selectors.
         item.add_value("url", response.request.url)
         item.add_css("title", "h1.property-title")
         item.add_css("status", "li.data-vermietet>.row>div.dd")
-        item.add_css("photos", "#immomakler-galleria>a::attr(href)")
+        item.add_css("pictures", "#immomakler-galleria>a::attr(href)")
         item.add_css("phone_number", "div.row.tel>div.dd>a")
         item.add_css("email", "div.row.email>div.dd>a")
         item.add_css("type", "li.list-group-item>.price>.dt")
-        # checks a 'type' field value to use correct selector depends on 'type' output.
+        # checks a 'type' field value to use correct selector
+        # depends on 'type' output.
         match item.get_output_value("type"):
             case "purchase":
                 item.add_css("price", "li.data-kaufpreis>.row>div.dd")

@@ -1,23 +1,18 @@
-# Scrapy settings for real_estate project
-#
-# For simplicity, this file contains only settings considered important or
-# commonly used. You can find more settings consulting the documentation:
-#
-#     https://docs.scrapy.org/en/latest/topics/settings.html
-#     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+from shutil import which
+
+from webdriver_manager.chrome import ChromeDriverManager
 
 BOT_NAME = "real_estate"
 
 SPIDER_MODULES = ["real_estate.spiders"]
 NEWSPIDER_MODULE = "real_estate.spiders"
 
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "real_estate (+http://www.yourdomain.com)"
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " \
+             "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -37,10 +32,15 @@ ROBOTSTXT_OBEY = True
 #TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-#DEFAULT_REQUEST_HEADERS = {
-#    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-#    "Accept-Language": "en",
-#}
+DEFAULT_REQUEST_HEADERS = {
+    "Accept": "text/css,*/*;q=0.1",
+    "Accept-Encoding": "gzip, deflate, br, zstd",
+    "Accept-Language": 'en-US,en;q=0.9,ru;q=0.8',
+    "Sec-Fetch-Dest": "style",
+    "Sec-Fetch-Mode": "no-cors",
+    "Sec-Fetch-Site": "same-origin",
+    "User-Agent": USER_AGENT
+}
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
@@ -50,9 +50,10 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    "real_estate.middlewares.RealEstateDownloaderMiddleware": 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    "real_estate.middlewares.RealEstateDownloaderMiddleware": 543,
+    "scrapy_selenium.SeleniumMiddleware": 800
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -91,3 +92,16 @@ ROBOTSTXT_OBEY = True
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+# Selenium
+SELENIUM_DRIVER_NAME = 'chrome'
+SELENIUM_DRIVER_EXECUTABLE_PATH = which(ChromeDriverManager().install())
+SELENIUM_DRIVER_ARGUMENTS = [
+    '--headless',
+    '--disable-javascript=false',
+    '--enable-cookies',
+    '--disable-gpu',
+    '--disable-notifications',
+    '--disable-web-security',
+    '--incognito',
+]
